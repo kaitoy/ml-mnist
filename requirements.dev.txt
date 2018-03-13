@@ -1,0 +1,6 @@
+isort
+jupyter
+matplotlib
+Pillow
+pylint
+yapf
