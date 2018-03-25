@@ -9,7 +9,7 @@ import logging
 from logging import Logger
 from typing import Tuple
 
-from keras.layers import Conv2D, Dense, Flatten, Input, MaxPooling2D
+from keras.layers import BatchNormalization, Conv2D, Dense, Flatten, Input, MaxPooling2D
 from keras.models import Model, load_model
 from numpy import float64, ndarray
 from tensorflow.python.framework.ops import Tensor  # pylint: disable=no-name-in-module
@@ -42,11 +42,13 @@ class KerasVGG7Classifier:
             x: Tensor = Conv2D(filters=8, kernel_size=(2, 2), padding='same', activation='relu')(inputs)
             x = Conv2D(filters=8, kernel_size=(2, 2), padding='same', activation='relu')(x)
             x = MaxPooling2D(pool_size=(2, 2))(x)
+            x = BatchNormalization()(x)
 
             x = Conv2D(filters=16, kernel_size=(2, 2), padding='same', activation='relu')(x)
             x = Conv2D(filters=16, kernel_size=(2, 2), padding='same', activation='relu')(x)
             x = Conv2D(filters=16, kernel_size=(2, 2), padding='same', activation='relu')(x)
             x = MaxPooling2D(pool_size=(2, 2))(x)
+            x = BatchNormalization()(x)
 
             x = Flatten()(x)
             x = Dense(units=256, activation='relu')(x)
