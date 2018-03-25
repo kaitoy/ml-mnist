@@ -8,6 +8,8 @@ from configparser import ConfigParser
 from logging import FileHandler, Formatter, Logger, StreamHandler
 from os import mkdir, path
 
+import numpy as np
+
 from lib.classifier import DigitClassifier
 from lib.mnist import MNIST
 
@@ -80,6 +82,7 @@ def _parse_args(config: ConfigParser) -> Namespace:
         default=config.get('common', 'model_name')
     )
     parser_pred.add_argument('-f', '--file', help='path to a trained model. models/{model_name} by default')
+    parser_pred.add_argument('-e', '--errors', action='store_true', help='show indices of errors')
 
     return parser.parse_args()
 
@@ -145,12 +148,17 @@ def main() -> None:
                 path.join(app_home, config.get('common', 'test_labels')),
             )
             mnist_test.read()
+
+            labels = mnist_test.labels.copy()
             mnist_test.preprocess()
 
             classifier: DigitClassifier = DigitClassifier(args.model_name)
             classifier.load(path_to_model)
             results = classifier.predict(mnist_test, batch_size=config.getint('common', 'batch_size'))
-            print(results)
+            if args.errors:
+                print(np.array(range(labels.size))[labels != results])
+            else:
+                print(results)
 
     except Exception as ex:
         logger.exception(ex)
