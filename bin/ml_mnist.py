@@ -128,28 +128,28 @@ def main() -> None:
 
             classifier.dump(path_to_model)
         elif args.subcomm == 'eval':
-            mnist_train: MNIST = MNIST(
+            mnist_test: MNIST = MNIST(
                 path.join(app_home, config.get('common', 'test_images')),
                 path.join(app_home, config.get('common', 'test_labels')),
             )
-            mnist_train.read()
-            mnist_train.preprocess()
+            mnist_test.read()
+            mnist_test.preprocess()
 
             classifier: DigitClassifier = DigitClassifier(args.model_name)
             classifier.load(path_to_model)
-            (loss, acc) = classifier.evaluate(mnist_train, batch_size=config.getint('common', 'batch_size'))
+            (loss, acc) = classifier.evaluate(mnist_test, batch_size=config.getint('common', 'batch_size'))
             print(f"loss: {loss}, acc: {acc}")
         elif args.subcomm == 'pred':
-            mnist_train: MNIST = MNIST(
+            mnist_test: MNIST = MNIST(
                 path.join(app_home, config.get('common', 'test_images')),
                 path.join(app_home, config.get('common', 'test_labels')),
             )
-            mnist_train.read()
-            mnist_train.preprocess()
+            mnist_test.read()
+            mnist_test.preprocess()
 
             classifier: DigitClassifier = DigitClassifier(args.model_name)
             classifier.load(path_to_model)
-            results = classifier.predict(mnist_train, batch_size=config.getint('common', 'batch_size'))
+            results = classifier.predict(mnist_test, batch_size=config.getint('common', 'batch_size'))
             print(results)
 
     except Exception as ex:
