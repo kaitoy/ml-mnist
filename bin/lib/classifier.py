@@ -57,7 +57,7 @@ class DigitClassifier:
             batch_size (int): Batch size
 
         Returns:
-            list(int): The results.
+            ndarray: The results. Shape: (num_samples,)
         """
 
         return self.model.predict(mnist.images, mnist.num_samples, batch_size=batch_size)

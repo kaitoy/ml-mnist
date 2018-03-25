@@ -82,7 +82,7 @@ class KerasVGG7Classifier:
             batch_size (int): Batch size
 
         Returns:
-            list(int): The results.
+            ndarray: The results. Shape: (num_samples,)
         """
 
         imgs: ndarray = images.reshape((num_samples, IMAGE_NUM_ROWS, IMAGE_NUM_COLS, 1))
