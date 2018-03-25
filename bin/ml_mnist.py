@@ -7,8 +7,10 @@ from argparse import ArgumentParser, Namespace
 from configparser import ConfigParser
 from logging import FileHandler, Formatter, Logger, StreamHandler
 from os import mkdir, path
+from typing import Dict, Tuple
 
 import numpy as np
+from numpy import ndarray
 
 from lib.classifier import DigitClassifier
 from lib.mnist import MNIST
@@ -82,7 +84,7 @@ def _parse_args(config: ConfigParser) -> Namespace:
         default=config.get('common', 'model_name')
     )
     parser_pred.add_argument('-f', '--file', help='path to a trained model. models/{model_name} by default')
-    parser_pred.add_argument('-e', '--errors', action='store_true', help='show indices of errors')
+    parser_pred.add_argument('-ea', '--error-analysis', action='store_true', help='error analysis')
 
     return parser.parse_args()
 
@@ -155,8 +157,35 @@ def main() -> None:
             classifier: DigitClassifier = DigitClassifier(args.model_name)
             classifier.load(path_to_model)
             results = classifier.predict(mnist_test, batch_size=config.getint('common', 'batch_size'))
-            if args.errors:
-                print(np.array(range(labels.size))[labels != results])
+            if args.error_analysis:
+                err_filter: ndarray = labels != results
+                err_indices: ndarray = np.array(range(labels.size))[err_filter]
+                err_preds: ndarray = results[err_filter]
+                actuals: ndarray = labels[err_filter]
+                print("(idx, pred, actual)")
+                print(list(zip(err_indices, err_preds, actuals)))
+
+                err_labels: Dict[int, int] = {}
+                for label in labels[err_filter]:
+                    if label in err_labels:
+                        err_labels[label] = err_labels[label] + 1
+                    else:
+                        err_labels[label] = 1
+                print()
+                print("label: count")
+                for key, val in sorted(err_labels.items(), key=lambda x: -x[1]):
+                    print(str(key) + ": " + str(val))
+
+                err_patterns: Dict[Tuple[int, int], int] = {}
+                for i in zip(err_preds, actuals):
+                    if i in err_patterns:
+                        err_patterns[i] = err_patterns[i] + 1
+                    else:
+                        err_patterns[i] = 1
+                print()
+                print("(pred, actual): count")
+                for key, val in sorted(err_patterns.items(), key=lambda x: -x[1]):
+                    print(str(key) + ": " + str(val))
             else:
                 print(results)
 
