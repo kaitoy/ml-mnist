@@ -7,7 +7,7 @@
 
 import logging
 from logging import Logger
-from typing import Tuple
+from typing import List, Tuple
 
 from keras.layers import BatchNormalization, Conv2D, Dense, Flatten, Input, MaxPooling2D
 from keras.models import Model, load_model
@@ -73,17 +73,20 @@ class KerasVGG7Classifier:
 
         self._model.fit(x=mnist.images, y=mnist.labels, batch_size=batch_size, epochs=epochs)
 
-    def predict(self, image: ndarray) -> int:
+    def predict(self, images: ndarray, num_samples: int, batch_size: int = 512) -> List[int]:
         """Predicts the class (number) for the given image.
 
         Args:
-            image (ndarray): An image. Shape: (# of cols * # of rows,)
+            images (ndarray): Images.
+            num_samples (int): Number of samples.
+            batch_size (int): Batch size
 
         Returns:
-            int: The predicted class.
+            list(int): The results.
         """
 
-        return self._model.predict(x=image.reshape((1,) + image.shape))[0].argmax()
+        imgs: ndarray = images.reshape((num_samples, IMAGE_NUM_ROWS, IMAGE_NUM_COLS, 1))
+        return self._model.predict(x=imgs, batch_size=batch_size).argmax(axis=1)
 
     def evaluate(self, mnist: MNIST, batch_size: int = 512) -> Tuple[float64, float64]:
         """Evaluates the trained model with the given data.

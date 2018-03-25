@@ -72,6 +72,15 @@ def _parse_args(config: ConfigParser) -> Namespace:
     )
     parser_eval.add_argument('-f', '--file', help='path to a trained model. models/{model_name} by default')
 
+    parser_eval: ArgumentParser = subparsers.add_parser('pred')
+    parser_eval.add_argument(
+        '-mn',
+        '--model-name',
+        help='modelname. Takes precedence over the conf.',
+        default=config.get('common', 'model_name')
+    )
+    parser_eval.add_argument('-f', '--file', help='path to a trained model. models/{model_name} by default')
+
     return parser.parse_args()
 
 
@@ -130,6 +139,18 @@ def main() -> None:
             classifier.load(path_to_model)
             (loss, acc) = classifier.evaluate(mnist_train, batch_size=config.getint('common', 'batch_size'))
             print(f"loss: {loss}, acc: {acc}")
+        elif args.subcomm == 'pred':
+            mnist_train: MNIST = MNIST(
+                path.join(app_home, config.get('common', 'test_images')),
+                path.join(app_home, config.get('common', 'test_labels')),
+            )
+            mnist_train.read()
+            mnist_train.preprocess()
+
+            classifier: DigitClassifier = DigitClassifier(args.model_name)
+            classifier.load(path_to_model)
+            results = classifier.predict(mnist_train, batch_size=config.getint('common', 'batch_size'))
+            print(results)
 
     except Exception as ex:
         logger.exception(ex)

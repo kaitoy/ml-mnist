@@ -6,9 +6,9 @@
 
 import logging
 from importlib import import_module
-from typing import Any, Tuple
+from typing import Any, List, Tuple
 
-from numpy import float64, ndarray
+from numpy import float64
 
 from .mnist import MNIST
 
@@ -49,17 +49,18 @@ class DigitClassifier:
 
         self.model.fit(mnist, batch_size=batch_size, epochs=epochs)
 
-    def predict(self, image: ndarray) -> int:
-        """Predicts the class (number) for the given image.
+    def predict(self, mnist: MNIST, batch_size: int = 512) -> List[int]:
+        """Predicts the class (number) for the given data.
 
         Args:
-            image (ndarray): An image. Shape: (# of cols * # of rows,)
+            mnist (MNIST): Test set of MNIST.
+            batch_size (int): Batch size
 
         Returns:
-            int: The predicted class.
+            list(int): The results.
         """
 
-        return self.model.predict(image)
+        return self.model.predict(mnist.images, mnist.num_samples, batch_size=batch_size)
 
     def evaluate(self, mnist: MNIST, batch_size: int = 512) -> Tuple[float64, float64]:
         """Evaluates the trained model with the given data.
