@@ -72,14 +72,14 @@ def _parse_args(config: ConfigParser) -> Namespace:
     )
     parser_eval.add_argument('-f', '--file', help='path to a trained model. models/{model_name} by default')
 
-    parser_eval: ArgumentParser = subparsers.add_parser('pred')
-    parser_eval.add_argument(
+    parser_pred: ArgumentParser = subparsers.add_parser('pred')
+    parser_pred.add_argument(
         '-mn',
         '--model-name',
         help='modelname. Takes precedence over the conf.',
         default=config.get('common', 'model_name')
     )
-    parser_eval.add_argument('-f', '--file', help='path to a trained model. models/{model_name} by default')
+    parser_pred.add_argument('-f', '--file', help='path to a trained model. models/{model_name} by default')
 
     return parser.parse_args()
 
