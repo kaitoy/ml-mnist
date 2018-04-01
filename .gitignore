@@ -34,3 +34,4 @@ venv.bak/
 
 # IntelliJ IDEA
 .idea
+*.iml

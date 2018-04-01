@@ -14,7 +14,7 @@ from keras.models import Model, load_model
 from numpy import float64, ndarray
 from tensorflow.python.framework.ops import Tensor  # pylint: disable=no-name-in-module
 
-from .mnist import IMAGE_NUM_COLS, IMAGE_NUM_ROWS, MNIST, NUM_CLASSES
+from lib.mnist import IMAGE_NUM_COLS, IMAGE_NUM_ROWS, MNIST, NUM_CLASSES
 
 logger: Logger = logging.getLogger(__name__)
 

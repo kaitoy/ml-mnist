@@ -10,7 +10,7 @@ from typing import Any, List, Tuple
 
 from numpy import float64
 
-from .mnist import MNIST
+from lib.mnist import MNIST
 
 logger = logging.getLogger(__name__)
 
